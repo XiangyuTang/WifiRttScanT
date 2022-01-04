@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: ./Application/libs/commons-math3-3.6.1.jar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Application/libs/commons-math3-3.6.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

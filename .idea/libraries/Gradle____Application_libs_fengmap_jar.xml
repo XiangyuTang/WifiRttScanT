@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: ./Application/libs/fengmap.jar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Application/libs/fengmap.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

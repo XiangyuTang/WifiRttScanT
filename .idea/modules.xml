@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/WifiRttScanT.iml" filepath="$PROJECT_DIR$/.idea/modules/WifiRttScanT.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Application/WifiRttScanT.Application.iml" filepath="$PROJECT_DIR$/.idea/modules/Application/WifiRttScanT.Application.iml" />
+    </modules>
+  </component>
+</project>

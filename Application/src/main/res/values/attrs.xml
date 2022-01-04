@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- NavigationBar -->
+    <declare-styleable name="NavigationBar">
+        <attr name="background" format="reference"></attr>
+        <attr name="title" format="reference|string"></attr>
+        <attr name="leftBackground" format="reference"></attr>
+        <attr name="textSize" format="dimension"></attr>
+        <attr name="textColor" format="reference|color"></attr>
+    </declare-styleable>
+
+    <declare-styleable name="ImageViewCheckBox">
+        <attr name="default_state" format="integer"/>
+        <attr name="checked_bkg" format="reference"/>
+        <attr name="unchecked_bkg" format="reference"/>
+        <attr name="checked_disabled" format="reference"/>
+    </declare-styleable>
+
+
+</resources>

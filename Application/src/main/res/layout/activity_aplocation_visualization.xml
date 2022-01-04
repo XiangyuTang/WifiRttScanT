@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+<!--    <com.example.android.wifirttscan.widget.NavigationBar-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:id="@+id/navigation_bar">-->
+<!--    </com.example.android.wifirttscan.widget.NavigationBar>-->
+
+    <TextView
+        android:id="@+id/txt_info"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:textSize="14sp" />
+
+    <com.fengmap.android.map.FMMapView
+        android:id="@+id/mapview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/txt_info" />
+
+    <RelativeLayout
+        android:id="@+id/ImageViewCheckBoxesLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible">
+        <com.example.android.wifirttscan.widget.ImageViewCheckBox
+            android:id="@+id/btn_locate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="50dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/shape_bg_rect_white"
+            android:padding="9dp"
+            app:checked_bkg="@drawable/position_cilck"
+            app:default_state="2"
+            app:unchecked_bkg="@drawable/position"/>
+
+        <FrameLayout
+            android:id="@+id/layout_group_control"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_above="@id/btn_locate"
+            android:layout_marginLeft="9dp"
+            android:layout_marginBottom="10dp" >
+        </FrameLayout>
+
+        <com.example.android.wifirttscan.widget.ImageViewCheckBox
+            android:id="@+id/btn_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="50dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/shape_bg_rect_white"
+            android:padding="6.5dp"
+            app:checked_bkg="@drawable/ic_three_view"
+            app:default_state="1"
+            app:unchecked_bkg="@drawable/ic_first_view"/>
+
+        <com.example.android.wifirttscan.widget.ImageViewCheckBox
+            android:id="@+id/btn_3d"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/btn_view"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/shape_bg_rect_white"
+            android:padding="9dp"
+            app:checked_bkg="@drawable/ic_3d_click"
+            app:default_state="1"
+            app:unchecked_bkg="@drawable/ic_3d"/>
+
+        <!--    <Button-->
+        <!--        android:text="@string/language_zh"-->
+        <!--        android:id="@+id/bv_language"-->
+        <!--        android:layout_width="wrap_content"-->
+        <!--        android:layout_height="wrap_content"-->
+        <!--        android:layout_alignParentRight="true"-->
+        <!--        android:layout_marginTop="60dp"-->
+        <!--        android:layout_marginRight="10dp"-->
+        <!--        android:background="@drawable/shape_bg_rect_white"-->
+        <!--        android:padding="9dp"-->
+        <!--        />-->
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/btn_start_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/btn_begin_navigation"
+        android:gravity="center"
+        android:text="@string/begin_navigate"
+        android:clickable="true"
+        android:onClick="onClickBeginNavigation"
+        android:textColor="#fff"
+        android:visibility="visible"
+        android:textSize="14sp"/>
+
+    <LinearLayout
+        android:id="@+id/after_click_btn_start_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible">
+        <TextView
+            android:id="@+id/confirm_navigate"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_begin_navigation"
+            android:gravity="center"
+            android:text="@string/confirm_navigate"
+            android:onClick="onClickConfirmNavigation"
+            android:layout_weight="1"
+            android:textColor="#fff"
+            android:textSize="14sp"/>
+        <!--button中间的占位符-->
+        <TextView
+            android:id="@+id/center"
+            android:layout_width="1dp"
+            android:layout_height="20dp"
+            android:background="@color/white"
+            />
+        <TextView
+            android:id="@+id/cancel_navigate"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_begin_navigation"
+            android:gravity="center"
+            android:text="@string/cancel_navigate"
+            android:onClick="onClickCancelNavigation"
+            android:layout_weight="1"
+            android:textColor="#fff"
+            android:textSize="14sp"/>
+
+
+    </LinearLayout>
+
+</RelativeLayout>
