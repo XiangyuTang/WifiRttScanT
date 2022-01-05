@@ -46,7 +46,7 @@
 
 ## 效果图
 1. AP扫描结果
-   <img src="./Application/docs/imgs/扫描结果snapshot.png" style="zoom:33%;" />
+   <img src="./Application/docs/imgs/扫描结果snapshot.png" width="100px" />
    
 2. 实时定位过程
    <img src="./imgs/定位过程snapshot.png" style="zoom:33%;" />
