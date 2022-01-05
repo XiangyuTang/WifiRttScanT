@@ -64,10 +64,14 @@
 ## 安装说明
 ### 环境依赖
 
-第三方相关JAR包依赖：
+第三方相关JAR包依赖：(在Application/libs/目录下已下载完毕)
+
 高德地图：[AMap_Location_V5.6.1_20211115.jar](https://amappc.cn-hangzhou.oss-pub.aliyun-inc.com/lbs/static/zip/AMap_Android_Location_SDK_All.zip)
+
 定位算法：[commons-math3-3.6.1.jar](https://repo1.maven.org/maven2/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar) 、[trilateration-1.0.2.jar](https://github-releases.githubusercontent.com/24968636/9c6dc64c-34ac-11e7-903a-cac48fb33a35?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20211116%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20211116T044150Z&X-Amz-Expires=300&X-Amz-Signature=ee7e4757a609dd37b101ba8d2430d5f6216218657b332b999fe830444bc5d522&X-Amz-SignedHeaders=host&actor_id=47786354&key_id=0&repo_id=24968636&response-content-disposition=attachment%3B%20filename%3Dtrilateration-1.0.2.jar&response-content-type=application%2Foctet-stream) 
+
 蜂鸟云地图：[fengmap.jar](https://source.fengmap.com/sdk/android/v2.5.10/FengMap_SDK_for_Android_v2.5.10.zip) 
+
 科大讯飞语音：[Msc.jar](https://sdk-download.xfyun.cn/57673ee1/1637649687417-3ec35bc2-33a5-4f9b-a84f-549b3b4bc3fb/Android_tts_online1142_57673ee1.zip)
 
 ## 使用说明
