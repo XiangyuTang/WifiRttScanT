@@ -47,16 +47,19 @@
 ## 效果图
 1. AP扫描结果
    
-   <img src="./Application/docs/imgs/扫描结果snapshot.png" width="300px" />
+    <img src="./Application/docs/imgs/扫描结果snapshot.png" width="300px" />
    
 2. 实时定位过程
-   <img src="./imgs/定位过程snapshot.png" style="zoom:33%;" />
+   
+    <img src="./Application/docs/imgs/定位过程snapshot.png" width="300px" />
    
 3. 导航路径规划
-   <img src="./imgs/路径规划snapshot.png" style="zoom:33%;" />
+
+    <img src="./Application/docs/imgs/路径规划snapshot.png" width="300px" />
    
 4. 导航过程
-    <img src="./imgs/导航过程snapshot.png" style="zoom:33%;" />
+
+    <img src="./Application/docs/imgs/导航过程snapshot.png" width="300px" />
    
 ## 安装说明
 ### 环境依赖
