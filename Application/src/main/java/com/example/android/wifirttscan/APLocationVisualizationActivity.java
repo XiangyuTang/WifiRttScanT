@@ -490,9 +490,7 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
             @Override
             public void run() {
                 String description = "到达目的地，步行导航结束。";
-//                if (!language) {
-//                    description = "arrived";
-//                }
+
                 String info = getResources().getString(R.string.label_walk_format, 0f,
                         0, description);
                 ViewHelper.setViewText(APLocationVisualizationActivity.this, R.id.txt_info, info);
@@ -536,64 +534,44 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
                     }
 
                     final boolean[] is_AP_supported_FTM = {false};
-                    Object object = new Object();
-                    //异步方法通过同步锁转为同步
-//                    synchronized (mWifiRttManager)
-                    {
-                        mWifiRttManager.startRanging(
-                                rangingRequest, getApplication().getMainExecutor(), new RangingResultCallback() {
-                                    @Override
-                                    public void onRangingFailure(int code) {
-                                        Log.e(TAG, "onRangingFailure: " + code);
-                                        //修改FLAGS后依然测距失败，那就恢复之前的状态
-                                        try {
-                                            Field flags = cls.getDeclaredField("flags");
-                                            flags.set(scanResult, 0);
-                                        } catch (NoSuchFieldException | IllegalAccessException e) {
-                                            e.printStackTrace();
-                                        }
-//                                        synchronized (mWifiRttManager) {
-//                                            mWifiRttManager.notifyAll();
-//                                        }
+                    mWifiRttManager.startRanging(
+                            rangingRequest, getApplication().getMainExecutor(), new RangingResultCallback() {
+                                @Override
+                                public void onRangingFailure(int code) {
+                                    Log.e(TAG, "onRangingFailure: " + code);
+                                    //修改FLAGS后依然测距失败，那就恢复之前的状态
+                                    try {
+                                        Field flags = cls.getDeclaredField("flags");
+                                        flags.set(scanResult, 0);
+                                    } catch (NoSuchFieldException | IllegalAccessException e) {
+                                        e.printStackTrace();
                                     }
+                                }
 
-                                    @Override
-                                    public void onRangingResults(@NonNull List<RangingResult> results) {
-                                        Log.d(TAG, "onRangingResults: " + results);
+                                @Override
+                                public void onRangingResults(@NonNull List<RangingResult> results) {
+                                    Log.d(TAG, "onRangingResults: " + results);
 
-                                        for(RangingResult rr : results){
-                                            if(rr.getStatus() == RangingResult.STATUS_SUCCESS && !mFTMCapableAPs.contains(scanResult)){
-                                                synchronized (this){
-                                                    mFTMCapableAPs.add(scanResult);
-                                                    is_AP_supported_FTM[0] = true;
-                                                }
-
-//                                                synchronized (mWifiRttManager) {
-//                                                    mWifiRttManager.notifyAll();
-//                                                }
+                                    for(RangingResult rr : results){
+                                        if(rr.getStatus() == RangingResult.STATUS_SUCCESS && !mFTMCapableAPs.contains(scanResult)){
+                                            synchronized (this){
+                                                mFTMCapableAPs.add(scanResult);
+                                                is_AP_supported_FTM[0] = true;
                                             }
-                                            else{
-                                                //修改FLAGS后依然测距失败，那就恢复之前的状态
-                                                try {
-                                                    Field flags = cls.getDeclaredField("flags");
-                                                    flags.set(scanResult, 0);
-                                                } catch (NoSuchFieldException | IllegalAccessException e) {
-                                                    e.printStackTrace();
-                                                }
-//                                                synchronized (mWifiRttManager) {
-//                                                    mWifiRttManager.notifyAll();
-//                                                }
-                                            }
-
                                         }
+                                        else{
+                                            //修改FLAGS后依然测距失败，那就恢复之前的状态
+                                            try {
+                                                Field flags = cls.getDeclaredField("flags");
+                                                flags.set(scanResult, 0);
+                                            } catch (NoSuchFieldException | IllegalAccessException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+
                                     }
-                                });
-//                        try {
-//                            mWifiRttManager.wait();
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-                    }
+                                }
+                            });
 
                     if(is_AP_supported_FTM[0]==true){
                         Log.i(TAG, "onReceive: AP_supports_FTM"+scanResult.toString());
@@ -827,8 +805,8 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
         //更新，重新绘制AP的ImageMarker
         for(ScanResult sr : mFTMCapableAPs){
             ApInfo ap_info = null;
-            if(sr.BSSID.equals("a8:5e:45:4b:05:bc")){ //ASUS_B8_5G 左下角,张丰露工位
-                ap_info = new ApInfo(sr.SSID, sr.BSSID, 12950034.0969, 4865479.1458, 1.17,2);
+            if(sr.BSSID.equals("a8:5e:45:4b:05:bc")){ //zsf_5G 左下角,张丰露工位
+                ap_info = new ApInfo(sr.SSID, sr.BSSID, 12950036.9823, 4865480.2896, 0.72,2);
             }
             else if(sr.BSSID.equals("a8:5e:45:20:7d:7c")){ //ASUS_78_5G 随机中间放置 自己工位上的地上
                 ap_info = new ApInfo(sr.SSID, sr.BSSID, 12950042.4683 ,4865492.3977, 0,2);
