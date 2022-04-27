@@ -48,7 +48,11 @@
 2. 实时定位过程
    
     <img src="./Application/docs/imgs/定位过程snapshot.png" width="300px" />
-   
+
+      <videos id="video" controls="" preload="none" poster="定位过程">
+         <source id="mp4" src="./Application/docs/videos/定位效果演示.png" type="video/mp4">
+      </videos>   
+
 3. 导航路径规划
 
     <img src="./Application/docs/imgs/路径规划snapshot.png" width="300px" />
