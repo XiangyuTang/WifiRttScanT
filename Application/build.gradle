@@ -27,6 +27,7 @@ dependencies {
     implementation files('libs/commons-math3-3.6.1.jar')
     implementation files('libs/AMap_Location_V5.6.1_20211115.jar')
     implementation files('libs/Msc.jar')
+    implementation files('libs/mysql-connector-java-5.0.7.jar')
 
 
 }

@@ -57,9 +57,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+
 
 /**
  * Displays list of Access Points enabled with WifiRTT (to check distance). Requests location
@@ -149,6 +147,9 @@ public class MainActivity extends AppCompatActivity implements ScanResultClickLi
             toast.show();
             logToUi("Copyright © 2021 THU. All rights reserved.️ ");
         }
+
+
+
 
     }
 

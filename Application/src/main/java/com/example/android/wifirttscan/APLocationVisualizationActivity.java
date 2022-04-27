@@ -40,7 +40,10 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.example.android.wifirttscan.entity.ApInfo;
 import com.example.android.wifirttscan.entity.ApRangingHistoryInfo;
+import com.example.android.wifirttscan.entity.LocationInfo;
 import com.example.android.wifirttscan.utils.ConvertUtils;
+import com.example.android.wifirttscan.utils.DBOpenHelper;
+import com.example.android.wifirttscan.utils.DeviceInfoHelper;
 import com.example.android.wifirttscan.utils.FMCoordTransformer;
 import com.example.android.wifirttscan.utils.LocationAlgorithm;
 import com.example.android.wifirttscan.utils.ViewHelper;
@@ -86,6 +89,7 @@ import com.iflytek.cloud.SpeechSynthesizer;
 import com.iflytek.cloud.SpeechUtility;
 import com.lemmingapex.trilateration.NonLinearLeastSquaresSolver;
 import com.lemmingapex.trilateration.TrilaterationFunction;
+import com.mysql.jdbc.PreparedStatement;
 
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer;
 import org.apache.commons.math3.fitting.leastsquares.LevenbergMarquardtOptimizer;
@@ -93,8 +97,16 @@ import org.apache.commons.math3.fitting.leastsquares.LevenbergMarquardtOptimizer
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -136,6 +148,7 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
     List<double[]> snapshot_location_points; //存储连续SNAPSHOT_POINTS_NUM次定位的快照点集合 用于传入算法得到这一时段的最优定位点
 
     private Map<String, ApRangingHistoryInfo> map = new HashMap(); // key:AP的MAC地址，value：AP测距历史信息对象
+    private Map<String, ApInfo> ap_list = new HashMap(); // key:AP的MAC地址，value：AP测距历史信息对象
 
     private FMLocationLayer mLocationLayer;//定位STA图层
     private FMImageLayer mAPLayer;
@@ -224,6 +237,9 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
 
     private boolean isInNavigationProcess = false;
 
+    //数据库相关
+    private Connection conn = null;
+
     @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,7 +258,6 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
         mFMMap.openMapById(DEFAULT_MAP_ID, true); //打开地图
         mFMMap.setOnFMMapInitListener(this);
 //        mFMMap.setBackgroundColor();
-
 
         Bundle receive = this.getIntent().getExtras();
         mFTMCapableAPs = receive.getParcelableArrayList("FTMCapableAPs");
@@ -271,6 +286,10 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
         SpeechUtility.createUtility(getApplicationContext(), SpeechConstant.APPID + "=57673ee1");
         //创建语音合成SpeechSynthesizer对象
         createSynthesizer();
+
+
+        //加载数据库里当前建筑地图的AP信息,FIT楼2层
+        getFloorAPs(1,2);
     }
 
     @Override
@@ -295,10 +314,92 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
         unregisterReceiver(mApInfoReceiver);
         unregisterReceiver(mWifiScanReceiver);
         //注销定时事件
-        timer.cancel();
-        mTimer.cancel();
+        if(timer!=null) timer.cancel();
+        if(mTimer!=null) mTimer.cancel();
         //停止高德定位
         mLocationClient.stopLocation();
+        //关闭数据库链接
+        if(conn!=null) {
+            try {
+                conn.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+    }
+    public void uploadLocInfo(LocationInfo locationInfo){
+        new Thread(){
+            @Override
+            public void run(){
+                //初始化数据库链接，必须要线程里创建链接
+                conn =(Connection) DBOpenHelper.getConn();
+                if(conn!=null) { //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+                    Log.d("调试", "连接成功");
+                    String sql = "insert into location_info " +
+                            "(mac_wlan0,mac_eth0,ipv4_addr,ipv6_addr,timestamp,building_id,floor_id,longitude,latitude,altitude,remarks) " +
+                            "values(?,?,?,?,?,?,?,?,?,?,?)";
+                    PreparedStatement pst;
+                    try {
+                        pst = (PreparedStatement) conn.prepareStatement(sql);
+                        //将输入的edit框的值获取并插入到数据库中
+                        pst.setString(1,locationInfo.getMac_wlan0());
+                        pst.setString(2,locationInfo.getMac_eth0());
+                        pst.setString(3,locationInfo.getIpv4_addr());
+                        pst.setString(4,locationInfo.getIpv6_addr());
+                        pst.setTimestamp(5, locationInfo.getDate());
+                        pst.setInt(6,locationInfo.getBuilding_id());
+                        pst.setInt(7,locationInfo.getFloor_id());
+                        pst.setDouble(8,locationInfo.getLongitude());
+                        pst.setDouble(9,locationInfo.getLatitude());
+                        pst.setDouble(10,locationInfo.getAltitude());
+                        pst.setString(11,locationInfo.getRemarks());
+                        pst.executeUpdate();
+                        pst.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    Log.e("Upload调试","连接失败");
+                }
+            }
+        }.start();
+    }
+
+    /**
+     * 查询数据库表中的AP信息
+     *
+     */
+    public void getFloorAPs(int building_id,int floor_id){
+        new  Thread(){
+            public  void run(){
+                try {
+                    //初始化数据库链接，必须要线程里创建链接
+                    conn =(Connection) DBOpenHelper.getConn();
+                    if(conn!=null){ //判断 如果返回不为空则说明链接成功 如果为null的话则连接失败 请检查你的 mysql服务器地址是否可用 以及数据库名是否正确 并且 用户名跟密码是否正确
+                        Log.d("调试","连接成功");
+                        Statement stmt = conn.createStatement(); //根据返回的Connection对象创建 Statement对象
+                        String sql = "select * from access_points where building_id="+building_id+" and floor_id="+floor_id; //要执行的sql语句
+                        ResultSet rs = stmt.executeQuery(sql); //使用executeQury方法执行sql语句 返回ResultSet对象 即查询的结果
+                        while (rs.next()){
+                            String bssid = rs.getString("bssid");
+                            String ssid = rs.getString("ssid");
+                            Double longitude = rs.getDouble("longitude");
+                            Double latitude = rs.getDouble("latitude");
+                            Double altitude = rs.getDouble("altitude");
+                            ApInfo apInfo = new ApInfo(ssid,bssid,longitude,latitude,altitude,floor_id);
+                            ap_list.put(bssid,apInfo);
+                            Log.i(TAG, "run: "+bssid+"|"+ssid);
+                        }
+                        stmt.close();
+                    }else{
+                        Log.e("select调试","连接失败");
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+
     }
 
     @Override
@@ -417,11 +518,11 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
 
                 // 被约束过的点
                 FMGeoCoord contraintedCoord = fmNavigationInfo.getPosition();
-                if (offset > DEFAULT_MAX_DISTANCE) {
-                    // 重新规划路径
-                    scheduleResetRoute(fmNavigationInfo.getRealPosition());
-                    return;
-                }
+//                if (offset > DEFAULT_MAX_DISTANCE) {
+//                    // 重新规划路径
+//                    scheduleResetRoute(fmNavigationInfo.getRealPosition());
+//                    return;
+//                }
 
                 // 更新定位标志物
                 updateHandledMarker(contraintedCoord, fmNavigationInfo.getAngle());
@@ -687,7 +788,6 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
                         // 每SNAPSHOT_POINTS_NUM个坐标代入Mean_shift聚类算法求最密集点，作为最终预测坐标
                         snapshot_location_points.add(centroid);
                         if(snapshot_location_points.size() == SNAPSHOT_POINTS_NUM){
-//                            Toast.makeText(getApplicationContext(),"更新定位点状态",Toast.LENGTH_SHORT).show();
                             double[] init_point = new double[centroid.length];
                             for(int x=0;x<init_point.length;x++){
                                 double tmp_sum = 0;
@@ -700,24 +800,49 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
                             centroid = LocationAlgorithm.mean_shift(snapshot_location_points,init_point);
                             snapshot_location_points.clear();
                             FMGeoCoord coord = null;
-                            //如果是首次定位, 或者用户移动速度>0, 才录入定位坐标
-                            if(walking_routes.size()==0 || mLocationMarkerSpeed>0){
+                            //用户移动速度>=0, 才录入定位坐标
+                            if(mLocationMarkerSpeed>=0){ // walking_routes.size()==0  || mLocationMarkerSpeed>0
                                 Log.i(TAG, "cal_STA_location: mLocationMarkerSpeed:"+mLocationMarkerSpeed);
+                                LocationInfo locationInfo = new LocationInfo();
                                 if(centroid.length==3){
                                     walking_routes.add(new FMMapCoord(centroid[0],centroid[1],centroid[2]));
                                     coord = new FMGeoCoord(mFMMap.getFocusGroupId(),//todo 默认单层定位，待优化
                                             new FMMapCoord(centroid[0], centroid[1],centroid[2]));
+                                    locationInfo.setLongitude(centroid[0]);
+                                    locationInfo.setLatitude(centroid[1]);
+                                    locationInfo.setAltitude(centroid[2]);
                                 }
                                 else if(centroid.length==2){
                                     walking_routes.add(new FMMapCoord(centroid[0],centroid[1]));
                                     coord = new FMGeoCoord(mFMMap.getFocusGroupId(),//todo 默认单层定位，待优化
                                             new FMMapCoord(centroid[0], centroid[1]));
+                                    locationInfo.setLongitude(centroid[0]);
+                                    locationInfo.setLatitude(centroid[1]);
                                 }
                                 //todo 是否需要检验新定位点是否漂移？
                                 walking_geo_routes.add(coord);
                                 mLocationMarkerRealTimeCoord = coord;
-                            }
 
+                                //todo 把定位数据添加进数据库
+                                //todo 需要的数据 设备MAC地址，IP地址，时间戳,build_id,floor_id,coord
+                                String ipv4 = DeviceInfoHelper.getIPAddress(true); // IPv4
+                                String ipv6 = DeviceInfoHelper.getIPAddress(false); // IPv6
+                                String mac_wlan0 = DeviceInfoHelper.getMACAddress("wlan0");
+                                String mac_eth0 = DeviceInfoHelper.getMACAddress("eth0");//MAC eth0
+                                Log.i(TAG, "cal_STA_location: ipv4:"+ipv4+" ipv6:"+ipv6+" mac_wlan0:"+mac_wlan0+" mac_eth0:"+mac_eth0);
+
+                                locationInfo.setIpv4_addr(ipv4);
+                                locationInfo.setIpv6_addr(ipv6);
+                                locationInfo.setMac_wlan0(mac_wlan0);
+                                locationInfo.setMac_eth0(mac_eth0);
+                                locationInfo.setDate(new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
+                                locationInfo.setLongitude(centroid[0]);
+                                locationInfo.setBuilding_id(1);//todo 待优化
+                                locationInfo.setFloor_id(2);//todo 待优化
+                                locationInfo.setRemarks("test");
+                                //上传信息至数据库
+                                uploadLocInfo(locationInfo);
+                            }
 
                             //更新定位点在地图上的位置,如果不在导航过程中就更新实时位置
                             if(!isInNavigationProcess){
@@ -727,17 +852,6 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
                             }
                         }
 
-//                        walking_routes.add(new FMMapCoord(centroid[0],centroid[1],centroid[2]));
-//                        FMGeoCoord coord = new FMGeoCoord(mFMMap.getFocusGroupId(),//todo 默认单层定位，待优化
-//                                new FMMapCoord(centroid[0], centroid[1],centroid[2]));
-//                        walking_geo_routes.add(coord);
-//                        mLocationMarkerRealTimeCoord = coord;
-//                        //更新定位点在地图上的位置,如果不在导航过程中就更新实时位置
-//                        if(!isInNavigationProcess){
-//                            updateLocationMarker();
-//                        }else{//如果在导航中就暂时移除定位点标记
-//                            removeLocationMarker();
-//                        }
                         return true;
                     }
 
@@ -804,32 +918,32 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
 //        }
         //更新，重新绘制AP的ImageMarker
         for(ScanResult sr : mFTMCapableAPs){
-            ApInfo ap_info = null;
-            if(sr.BSSID.equals("a8:5e:45:4b:05:bc")){ //zsf_5G 左下角,张丰露工位
-                ap_info = new ApInfo(sr.SSID, sr.BSSID, 12950036.9823, 4865480.2896, 0.72,2);
-            }
-            else if(sr.BSSID.equals("a8:5e:45:20:7d:7c")){ //ASUS_78_5G 随机中间放置 自己工位上的地上
-                ap_info = new ApInfo(sr.SSID, sr.BSSID, 12950042.4683 ,4865492.3977, 0,2);
-            }
-            else if(sr.BSSID.equals("24:4b:fe:6c:ba:54")){ //ASUS_50_5G 右下角 王明工位上
-                ap_info = new ApInfo(sr.SSID, sr.BSSID, 12950044.6284, 4865480.5960, 0.74,2);
-            }
-            else if(sr.BSSID.equals("24:4b:fe:6c:b8:24")){ //ASUS_20_5G 左上角 4-204门口桌上
-                ap_info = new ApInfo(sr.SSID, sr.BSSID, 12950031.7031, 4865500.0258, 0.71,2);
-            }
-//            else if(sr.BSSID.equals("24:4b:fe:6c:b8:24")){ //ASUS_20_5G 右上角 李元杰老师工位上 壮烈牺牲 老师担心有辐射
+//            ApInfo ap_info = null;
+//            if(sr.BSSID.equals("a8:5e:45:4b:05:bc")){ //zsf_5G 左下角,张丰露工位
+//                ap_info = new ApInfo(sr.SSID, sr.BSSID, 12950036.9823, 4865480.2896, 0.72,2);
+//            }
+//            else if(sr.BSSID.equals("a8:5e:45:20:7d:7c")){ //ASUS_78_5G 随机中间放置 自己工位上的地上
+//                ap_info = new ApInfo(sr.SSID, sr.BSSID, 12950042.4683 ,4865492.3977, 0,2);
+//            }
+//            else if(sr.BSSID.equals("24:4b:fe:6c:ba:54")){ //ASUS_50_5G 右下角 王明工位上
+//                ap_info = new ApInfo(sr.SSID, sr.BSSID, 12950044.6284, 4865480.5960, 0.74,2);
+//            }
+//            else if(sr.BSSID.equals("24:4b:fe:6c:b8:24")){ //3-229monitor_5G 左上角 4-204门口桌上
+//                ap_info = new ApInfo(sr.SSID, sr.BSSID, 12950031.7031, 4865500.0258, 0.71,2);
+//            }
+//            else if(sr.BSSID.equals("a8:5e:45:74:d4:5c")){ //todo ASUS_58_5G 放在宿舍，测试路由器
 //                ap_info = new ApInfo(sr.SSID, sr.BSSID, 12950046.5318, 4865496.7674, 0.74,2);
 //            }
-//            else if(sr.BSSID.equals("a4:b1:c1:81:47:23")){ //CPMPULAB_WILD 自己工位上的桌上
-//                ap_info = new ApInfo(sr.SSID, sr.BSSID, 12950042.4683 ,4865492.3977, 0.74,2);
+//            if(ap_info != null){
+//                removeAPImageMarker(mAPLayer,ap_info);
+//                createAPImageMarker(mAPLayer,ap_info);
 //            }
-            else if(sr.BSSID.equals("a8:5e:45:74:d4:5c")){ //todo ASUS_58_5G 放在宿舍，测试路由器
-                ap_info = new ApInfo(sr.SSID, sr.BSSID, 12950046.5318, 4865496.7674, 0.74,2);
-            }
 
-            else continue;
-            removeAPImageMarker(mAPLayer,ap_info);
-            createAPImageMarker(mAPLayer,ap_info);
+            if(ap_list.containsKey(sr.BSSID)){
+                ApInfo ap_info = ap_list.get(sr.BSSID);
+                removeAPImageMarker(mAPLayer,ap_info);
+                createAPImageMarker(mAPLayer,ap_info);
+            }
         }
 
 //        //todo 添加ImageMarker = AP，调试用
@@ -989,7 +1103,7 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
                         Log.d(TAG, "高德 onLocationChanged: "+aMapLocation.toString());
                         FMMapCoord coord = FMCoordTransformer.wgs2WebMercator(aMapLocation.getLongitude(),aMapLocation.getLatitude());
                         Log.d(TAG, "高德定位 FMMapCoord: "+coord);
-//                        updateAMapLocationMarker(coord,aMapLocation);
+//                        updateAMapLocationMarker(coord,aMapLocation);//高德地图定位点回显
                         if(walking_routes.size()>0) { //这里主要同步方向角
                             //更新定位点在地图上的位置,如果不在导航过程中就更新实时位置
                             if(!isInNavigationProcess){

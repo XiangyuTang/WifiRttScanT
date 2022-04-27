@@ -79,33 +79,62 @@
 ### 具体说明
 
 
-## 目录结构
+## 主要目录结构说明
 ```
-├── Readme.md                   // help
-├── app                         // 应用
-├── config                      // 配置
-│   ├── default.json
-│   ├── dev.json                // 开发环境
-│   ├── experiment.json         // 实验
-│   ├── index.js                // 配置控制
-│   ├── local.json              // 本地
-│   ├── production.json         // 生产环境
-│   └── test.json               // 测试环境
-├── data
-├── doc                         // 文档
-├── environment
-├── gulpfile.js
-├── locales
-├── logger-service.js           // 启动日志配置
-├── node_modules
-├── package.json
-├── app-service.js              // 启动应用配置
-├── static                      // web静态资源加载
-│   └── initjson
-│       └── config.js         // 提供给前端的配置
-├── test
-├── test-service.js
-└── tools
+├── Application
+│    ├── docs
+│    │    ├── README.md
+│    │    └── imgs
+│    ├── libs
+│    │    ├── AMap_Location_V5.6.1_20211115.jar
+│    │    ├── Msc.jar
+│    │    ├── commons-math3-3.6.1.jar
+│    │    ├── fengmap.jar
+│    │    ├── mysql-connector-java-5.0.7.jar
+│    │    ├── trilateration-1.0.2.jar
+│    └── src
+│        └── main
+│            ├── AndroidManifest.xml
+│            ├── assets
+│            └── java
+│                └── com
+│                    └── example
+│                        └── android
+│                            └── wifirttscan
+│                                ├── APLocationVisualizationActivity.java
+│                                ├── AccessPointRangingResultsActivity.java
+│                                ├── LocationPermissionRequestActivity.java
+│                                ├── MainActivity.java
+│                                ├── MyAdapter.java
+│                                ├── entity
+│                                │    ├── ApInfo.java
+│                                │    ├── ApRangingHistoryInfo.java
+│                                │    └── LocationInfo.java
+│                                ├── utils
+│                                │    ├── ConvertUtils.java
+│                                │    ├── DBOpenHelper.java
+│                                │    ├── DeviceInfoHelper.java
+│                                │    ├── FMCoordTransformer.java
+│                                │    ├── FileUtils.java
+│                                │    ├── LocationAlgorithm.java
+│                                │    ├── ViewHelper.java
+│                                │    └── ZipUtils.java
+│                                └── widget
+│                                    ├── ImageViewCheckBox.java
+│                                    └── NavigationBar.java
+├── README.md   
+├── README1.md
+├── build.gradle
+├── gradle.properties
+├── gradlew
+├── gradlew.bat
+├── local.properties
+├── screenshots
+│    ├── main1.png
+│    ├── main2.png
+│    └── main3.png
+├── settings.gradle
+└── tree.txt
 ```
 
 
@@ -122,9 +151,9 @@
 ## 鸣谢
 该项目参考了Google的WiFiRttScan app开源代码
 
-灵感来源于XXX
+灵感来源于Google WifiRttScan和MIT WifiRttScanX。
 
-感谢XXX的支持和陪伴
+感谢实验室老师和同学的支持和帮助。
 
 
 ## 版权信息
@@ -132,6 +161,9 @@
 
 
 ## 更新日志
+### V1.0.9 版本，2022-04-27
+1. 优化：项目架构，添加Mysql数据库服务器（本地测试通过）
+2. 新功能：可通过数据库下发AP位置信息，可上传用户定位信息，设备IP，MAC地址至后台数据库
 
 ### V1.0.8 版本，2022-03-07
 1. 导航功能初步完成
