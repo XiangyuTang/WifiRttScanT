@@ -10,10 +10,9 @@
 4. 使用说明
 5. 目录结构
 6. 关于作者
-7. 贡献者/贡献组织
-8. 鸣谢
-9. 版权信息
-10. 更新日志
+7. 鸣谢
+8. 版权信息
+9. 更新日志
 
 ---
 
@@ -41,9 +40,6 @@
 2. 室内定位
 3. 室内导航
 
-### 版本信息
-
-
 ## 效果图
 1. AP扫描结果
    
@@ -62,6 +58,8 @@
     <img src="./Application/docs/imgs/导航过程snapshot.png" width="300px" />
    
 ## 安装说明
+
+
 ### 环境依赖
 
 第三方相关JAR包依赖：(在Application/libs/目录下已下载完毕)
@@ -129,10 +127,6 @@
 ├── gradlew
 ├── gradlew.bat
 ├── local.properties
-├── screenshots
-│    ├── main1.png
-│    ├── main2.png
-│    └── main3.png
 ├── settings.gradle
 └── tree.txt
 ```
@@ -142,11 +136,6 @@
 作者姓名：唐翔宇
 
 联系方式：1661690249@qq.com
-
-
-## 贡献者/贡献组织
-请阅读 CONTRIBUTING.md 查阅为该项目做出贡献的开发者。
-
 
 ## 鸣谢
 该项目参考了Google的WiFiRttScan app开源代码
