@@ -34,7 +34,6 @@
 2. 引入科大讯飞SDK，支持语音导航播报
 3. 结合高德地图SDK，支持室内外地图定位无缝衔接
 
-
 ### 软件功能
 1. 扫描到所有支持FTM功能的AP
 2. 室内定位
@@ -49,9 +48,9 @@
    
     <img src="./Application/docs/imgs/定位过程snapshot.png" width="300px" />
 
-      <videos id="video" controls="" preload="none" poster="定位过程">
+      <video id="video" controls="" preload="none" poster="定位过程">
          <source id="mp4" src="./Application/docs/videos/定位效果演示.png" type="video/mp4">
-      </videos>   
+      </video>   
 
 3. 导航路径规划
 
