@@ -4,11 +4,10 @@
 
 # WifiRttScanT官方文档
 
-![]( https://img.shields.io/badge/JAVA-1.8+-brightgreen.svg)
-![]( https://img.shields.io/badge/AndroidStudio-bumblebee|2021.1.1Patch2-brightgreen.svg)
-
 ![]( https://img.shields.io/badge/build-passing-brightgreen.svg)
 ![]( https://img.shields.io/badge/deployment-passing-brightgreen.svg)
+![]( https://img.shields.io/badge/JAVA-1.8+-brightgreen.svg)
+![]( https://img.shields.io/badge/AndroidStudio-bumblebee|2021.1.1Patch2-brightgreen.svg)
 
 
 ## 目录
