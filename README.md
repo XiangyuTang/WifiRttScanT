@@ -1,10 +1,7 @@
-![logo]([./Application/docs/imgs/logo.png]#pic_center)
+[comment]: <> (![logo]&#40;[./Application/docs/imgs/logo.png]#pic_center&#41;)
+<img src="./Application/docs/imgs/logo.png" width = "130" height = "" align="middle" />
+
 # WifiRttScanT官方文档
-
-<div align=center>
-   <img src="./Application/docs/imgs/logo.png" width = "130" height = ""  />
-</div>
-
 ---
 
 [![Build Status](https://travis-ci.org/meolu/walden.svg?branch=master)](https://travis-ci.org/meolu/walden)
