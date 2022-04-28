@@ -1,6 +1,12 @@
 # WifiRttScanT官方文档
 
+<div align=center>
+   <img src="./Application/docs/imgs/logo.png" width = "230" height = ""  />
+</div>
+
 ---
+
+[![Build Status](https://travis-ci.org/meolu/walden.svg?branch=master)](https://travis-ci.org/meolu/walden)
 
 ## 目录
 
