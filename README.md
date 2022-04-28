@@ -1,4 +1,4 @@
-![logo](./Application/docs/imgs/logo.png)
+![logo]([./Application/docs/imgs/logo.png]#pic_center)
 # WifiRttScanT官方文档
 
 <div align=center>
