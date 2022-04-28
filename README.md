@@ -43,20 +43,28 @@
 1. AP扫描结果
    
     <img src="./Application/docs/imgs/扫描结果snapshot.png" width="300px" />
+
+2. 室内地图展示
    
-2. 实时定位过程
+   ![查看演示视频](./Application/docs/videos/室内地图Demo.mp4)
+
+   <img src="./Application/docs/imgs/室内地图snapshot.png" width="300px" />
+
+3. 实时定位过程
+
+   ![查看演示视频](./Application/docs/videos/定位效果演示.mp4)
    
     <img src="./Application/docs/imgs/定位过程snapshot.png" width="300px" />
 
       <video id="video" controls="" preload="none" poster="定位过程">
-         <source id="mp4" src="./Application/docs/videos/定位效果演示.png" type="video/mp4">
+         <source id="mp4" src="./Application/docs/videos/定位效果演示.mp4" type="video/mp4">
       </video>   
 
-3. 导航路径规划
+4. 导航路径规划
 
     <img src="./Application/docs/imgs/路径规划snapshot.png" width="300px" />
    
-4. 导航过程
+5. 导航过程
 
     <img src="./Application/docs/imgs/导航过程snapshot.png" width="300px" />
    
@@ -77,7 +85,9 @@
 
 ## 使用说明
 ### 简要说明
-略
+
+安卓开发者直接clone导入项目即可。
+
 ### 具体说明
 略
 
@@ -87,7 +97,7 @@
 │    ├── docs
 │    │    ├── README.md
 │    │    └── imgs
-│    ├── libs
+│    ├── libs //相关的jar包依赖
 │    │    ├── AMap_Location_V5.6.1_20211115.jar
 │    │    ├── Msc.jar
 │    │    ├── commons-math3-3.6.1.jar
@@ -125,7 +135,6 @@
 │                                    ├── ImageViewCheckBox.java
 │                                    └── NavigationBar.java
 ├── README.md   
-├── README1.md
 ├── build.gradle
 ├── gradle.properties
 ├── gradlew
