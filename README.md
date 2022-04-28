@@ -46,19 +46,19 @@
 
 2. 室内地图展示
    
-   ![查看演示视频](./Application/docs/videos/室内地图Demo.mp4)
+   [查看演示视频](./Application/docs/videos/室内地图Demo.mp4)
 
    <img src="./Application/docs/imgs/室内地图snapshot.png" width="300px" />
 
 3. 实时定位过程
 
-   ![查看演示视频](./Application/docs/videos/定位效果演示.mp4)
+   [查看演示视频](./Application/docs/videos/定位效果演示.mp4)
    
     <img src="./Application/docs/imgs/定位过程snapshot.png" width="300px" />
 
-      <video id="video" controls="" preload="none" poster="定位过程">
-         <source id="mp4" src="./Application/docs/videos/定位效果演示.mp4" type="video/mp4">
-      </video>   
+    <video id="video" controls="" preload="none" poster="定位过程">
+       <source id="mp4" src="./Application/docs/videos/定位效果演示.mp4" type="video/mp4">
+    </video>
 
 4. 导航路径规划
 
