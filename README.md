@@ -1,10 +1,11 @@
-[comment]: <> (![logo]&#40;[./Application/docs/imgs/logo.png]#pic_center&#41;)
+
 <img src="./Application/docs/imgs/logo.png" width = "130" height = "" align="middle" />
 
 # WifiRttScanT官方文档
 ---
 
 [![Build Status](https://travis-ci.org/meolu/walden.svg?branch=master)](https://travis-ci.org/meolu/walden)
+![]( https://img.shields.io/badge/JAVA-1.8+-green.svg)
 
 ## 目录
 
