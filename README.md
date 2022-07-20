@@ -1,5 +1,5 @@
 <div align="center">
-<img src="./Application/docs/imgs/logo.png" width = "130" height = "" />
+<img src="https://github.com/XiangyuTang/WifiRttScanT/blob/master/Application/docs/image/logo.png" width = "130" height = "" />
 </div>
 
 # WifiRttScanT官方文档
@@ -60,32 +60,31 @@
 ## 效果图
 1. AP扫描结果
    
-    <img src="./Application/docs/imgs/扫描结果snapshot.png" width="300px" />
+    <img src="https://raw.githubusercontent.com/XiangyuTang/WifiRttScanT/master/Application/docs/image/%E6%89%AB%E6%8F%8F%E7%BB%93%E6%9E%9Csnapshot.png" width="300px" />
 
 2. 室内地图展示
    
-   [查看演示视频](./Application/docs/videos/室内地图Demo.mp4)
+   [查看演示视频](./Application/docs/video/室内地图Demo.mp4)
 
-   <img src="./Application/docs/imgs/室内地图snapshot.png" width="300px" />
-
+   <img src="https://raw.githubusercontent.com/XiangyuTang/WifiRttScanT/master/Application/docs/image/%E5%AE%A4%E5%86%85%E5%9C%B0%E5%9B%BEsnapshot.png" width="300px" />
 
 3. 实时定位过程
 
-   [查看演示视频](./Application/docs/videos/定位效果演示.mp4)
+   [查看演示视频](./Application/docs/video/定位效果演示.mp4)
    
-    <img src="./Application/docs/imgs/定位过程snapshot.png" width="300px" />
+    <img src="https://raw.githubusercontent.com/XiangyuTang/WifiRttScanT/master/Application/docs/image/%E5%AE%9A%E4%BD%8D%E8%BF%87%E7%A8%8Bsnapshot.png" width="300px" />
 
     <video id="video" controls="" preload="none" poster="定位过程">
-       <source id="mp4" src="./Application/docs/videos/定位效果演示.mp4" type="video/mp4">
+       <source id="mp4" src="https://github.com/XiangyuTang/WifiRttScanT/blob/master/Application/docs/video/%E5%AE%9A%E4%BD%8D%E6%95%88%E6%9E%9C%E6%BC%94%E7%A4%BA.mp4" type="video/mp4">
     </video>
 
 4. 导航路径规划
 
-    <img src="./Application/docs/imgs/路径规划snapshot.png" width="300px" />
+    <img src="https://raw.githubusercontent.com/XiangyuTang/WifiRttScanT/master/Application/docs/image/%E8%B7%AF%E5%BE%84%E8%A7%84%E5%88%92snapshot.png" width="300px" />
    
 5. 导航过程
 
-    <img src="./Application/docs/imgs/导航过程snapshot.png" width="300px" />
+    <img src="https://raw.githubusercontent.com/XiangyuTang/WifiRttScanT/master/Application/docs/image/%E5%AF%BC%E8%88%AA%E8%BF%87%E7%A8%8Bsnapshot.png" width="300px" />
    
 ## 安装说明
 
