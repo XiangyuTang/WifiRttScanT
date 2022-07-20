@@ -41,10 +41,10 @@
         android:theme="@style/CustomAppTheme">
         <meta-data
             android:name="com.fengmap.mapapi.appkey"
-            android:value="f5c923b11834b5e3f4a8c6882bfcb9e2" />
+            android:value="XXX" />
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="bfc27c2d97c13f9815e5cac15a0d7375"/>
+            android:value="XXX"/>
         <service android:name="com.amap.api.location.APSService">
         </service>
         <activity
