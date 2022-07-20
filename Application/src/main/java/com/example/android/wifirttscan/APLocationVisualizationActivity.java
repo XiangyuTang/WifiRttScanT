@@ -40,6 +40,7 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.example.android.wifirttscan.entity.ApInfo;
 import com.example.android.wifirttscan.entity.ApRangingHistoryInfo;
+import com.example.android.wifirttscan.entity.LatLng;
 import com.example.android.wifirttscan.entity.LocationInfo;
 import com.example.android.wifirttscan.utils.ConvertUtils;
 import com.example.android.wifirttscan.utils.DBOpenHelper;
@@ -286,8 +287,6 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
         SpeechUtility.createUtility(getApplicationContext(), SpeechConstant.APPID + "=57673ee1");
         //创建语音合成SpeechSynthesizer对象
         createSynthesizer();
-
-
         //加载数据库里当前建筑地图的AP信息,FIT楼2层
         getFloorAPs(1,2);
     }
@@ -613,7 +612,6 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
             old_mFTMCapableAPs = new ArrayList<>(mFTMCapableAPs); // 注意这里不能直接赋=，相当于传引用，当mFTMCapableAPs变化，old_mFTMCapableAPs也会变化
             mFTMCapableAPs.clear();
 
-
             List<ScanResult> scanResults = mWifiManager.getScanResults();
             for (ScanResult scanResult : scanResults) {
                 if (scanResult.is80211mcResponder() && !mFTMCapableAPs.contains(scanResult)) {
@@ -628,56 +626,61 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
                         e.printStackTrace();
                     }
                     //再进行一次测距request
-                    RangingRequest rangingRequest =
-                            new RangingRequest.Builder().addAccessPoint(scanResult).build();
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
+                    try {
+                        RangingRequest rangingRequest =
+                                new RangingRequest.Builder().addAccessPoint(scanResult).build();
+                        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
 
-                    final boolean[] is_AP_supported_FTM = {false};
-                    mWifiRttManager.startRanging(
-                            rangingRequest, getApplication().getMainExecutor(), new RangingResultCallback() {
-                                @Override
-                                public void onRangingFailure(int code) {
-                                    Log.e(TAG, "onRangingFailure: " + code);
-                                    //修改FLAGS后依然测距失败，那就恢复之前的状态
-                                    try {
-                                        Field flags = cls.getDeclaredField("flags");
-                                        flags.set(scanResult, 0);
-                                    } catch (NoSuchFieldException | IllegalAccessException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                @Override
-                                public void onRangingResults(@NonNull List<RangingResult> results) {
-                                    Log.d(TAG, "onRangingResults: " + results);
-
-                                    for(RangingResult rr : results){
-                                        if(rr.getStatus() == RangingResult.STATUS_SUCCESS && !mFTMCapableAPs.contains(scanResult)){
-                                            synchronized (this){
-                                                mFTMCapableAPs.add(scanResult);
-                                                is_AP_supported_FTM[0] = true;
-                                            }
+                        final boolean[] is_AP_supported_FTM = {false};
+                        mWifiRttManager.startRanging(
+                                rangingRequest, getApplication().getMainExecutor(), new RangingResultCallback() {
+                                    @Override
+                                    public void onRangingFailure(int code) {
+                                        Log.e(TAG, "onRangingFailure: " + code);
+                                        //修改FLAGS后依然测距失败，那就恢复之前的状态
+                                        try {
+                                            Field flags = cls.getDeclaredField("flags");
+                                            flags.set(scanResult, 0);
+                                        } catch (NoSuchFieldException | IllegalAccessException e) {
+                                            e.printStackTrace();
                                         }
-                                        else{
-                                            //修改FLAGS后依然测距失败，那就恢复之前的状态
-                                            try {
-                                                Field flags = cls.getDeclaredField("flags");
-                                                flags.set(scanResult, 0);
-                                            } catch (NoSuchFieldException | IllegalAccessException e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-
                                     }
-                                }
-                            });
 
-                    if(is_AP_supported_FTM[0]==true){
-                        Log.i(TAG, "onReceive: AP_supports_FTM"+scanResult.toString());
+                                    @Override
+                                    public void onRangingResults(@NonNull List<RangingResult> results) {
+                                        Log.d(TAG, "onRangingResults: " + results);
+
+                                        for(RangingResult rr : results){
+                                            if(rr.getStatus() == RangingResult.STATUS_SUCCESS && !mFTMCapableAPs.contains(scanResult)){
+                                                synchronized (this){
+                                                    mFTMCapableAPs.add(scanResult);
+                                                    is_AP_supported_FTM[0] = true;
+                                                }
+                                            }
+                                            else{
+                                                //修改FLAGS后依然测距失败，那就恢复之前的状态
+                                                try {
+                                                    Field flags = cls.getDeclaredField("flags");
+                                                    flags.set(scanResult, 0);
+                                                } catch (NoSuchFieldException | IllegalAccessException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                });
+
+                        if(is_AP_supported_FTM[0]==true){
+                            Log.i(TAG, "onReceive: AP_supports_FTM"+scanResult.toString());
 //                        mFTMCapableAPs.add(scanResult);
+                        }
+                    }catch(Exception e){
+                        e.printStackTrace();
                     }
+
                 }
             }
 
@@ -867,8 +870,51 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
         else{
             //更新定位点位置和方向
             mLocationMarker.updateAngleAndPosition(mLocationMarkerAngle,walking_routes.get(walking_routes.size()-1));
-            if(mFMMap != null)
-                mFMMap.moveToCenter(walking_routes.get(walking_routes.size()-1),true);
+            //地图实时跟随，即定位点始终在地图中间
+//            if(mFMMap != null)
+////                mFMMap.moveToCenter(walking_routes.get(walking_routes.size()-1),true);
+////                mFMMap.move(walking_routes.get(walking_routes.size()-2),walking_routes.get(walking_routes.size()-1),true);
+            //尝试平滑移动定位点
+            FMSimulateNavigation mNavigation = new FMSimulateNavigation(mFMMap);
+            mNavigation.setStartPoint(walking_geo_routes.get(walking_geo_routes.size()-2));
+            mNavigation.setEndPoint(walking_geo_routes.get(walking_geo_routes.size()-1));
+            // 创建模拟导航配置对象
+            mNaviOption = new FMNaviOption();
+            // 设置跟随模式，默认跟随
+//            mNaviOption.setFollowPosition(true);
+            // 设置跟随角度（第一人视角），默认跟随
+//            mNaviOption.setFollowAngle(true);
+            // 点移距离视图中心点超过最大距离5米，就会触发移动动画；若设为0，则实时居中
+            mNaviOption.setNeedMoveToCenterMaxDistance(NAVI_MOVE_CENTER_MAX_DISTANCE);
+            // 设置导航开始时的缩放级别，true: 导航结束时恢复开始前的缩放级别，false：保持现状
+//            mNaviOption.setZoomLevel(NAVI_ZOOM_LEVEL, false);
+            // 设置配置
+            mNavigation.setNaviOption(mNaviOption);
+            // 设置导航监听接口
+            mNavigation.setOnNavigationListener(this);
+            int ret = mNavigation.analyseRoute(FMNaviAnalyser.FMNaviModule.MODULE_SHORTEST);
+//            if (ret == FMNaviAnalyser.FMRouteCalcuResult.ROUTE_SUCCESS) {
+//                mNavigation.drawNaviLine();
+//            } else {
+//                FMLog.le("Failed",FMNaviAnalyser.FMRouteCalcuResult.getErrorMsg(ret));
+//            }
+            FMSimulateNavigation simulateNavigation = mNavigation;
+            // 3米每秒。
+            simulateNavigation.simulate(3.0f);
+            mNavigation.clear();
+
+            //模拟导航8太行，引入高德的平滑定位，首先要将蜂鸟坐标转为经纬坐标
+//            FMMapCoord coord1 = walking_routes.get(walking_geo_routes.size()-2);
+//            FMMapCoord coord2 = walking_routes.get(walking_geo_routes.size()-1);
+//            LatLng cord1 = FMCoordTransformer.WebMercator2wgs(coord1);
+//            LatLng cord2 = FMCoordTransformer.WebMercator2wgs(coord2);
+//            List<LatLng> points = new ArrayList<>();
+//            points.add(cord1);
+//            points.add(cord2);
+//            SmoothMoveMarker smoothMarker = new SmoothMoveMarker(mAMap);
+
+
+
         }
     }
 
@@ -1660,6 +1706,7 @@ public class APLocationVisualizationActivity extends AppCompatActivity implement
      *
      * @param inputStr 语音合成文字
      */
+
     private void startSpeaking(String inputStr) {
         mTts.stopSpeaking();
 //        mTts.startSpeaking("说话测试", null);

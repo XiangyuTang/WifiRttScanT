@@ -2,3 +2,4 @@
 /.gradle/
 /Application/build/
 /Application/build/intermediates/javac/debug/classes/
+/Application/src/AndroidManifest.xml

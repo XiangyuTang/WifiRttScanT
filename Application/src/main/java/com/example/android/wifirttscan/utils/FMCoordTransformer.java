@@ -1,8 +1,10 @@
 package com.example.android.wifirttscan.utils;
 
+import static java.lang.Math.PI;
+
 import com.fengmap.android.map.geometry.FMMapCoord;
 import com.fengmap.android.utils.FMLocateCoordTransformer;
-
+import com.example.android.wifirttscan.entity.LatLng;
 /**
  * @author jyy
  * fengmap坐标转换
@@ -33,7 +35,6 @@ public class FMCoordTransformer {
      * @return Double
      */
     private Double getVectorLen(Double[] vector){
-
         return Math.sqrt(vector[0]*vector[0] + vector[1]*vector[1]);
     }
 
@@ -100,6 +101,21 @@ public class FMCoordTransformer {
     public static FMMapCoord wgs2WebMercator(double longitude, double latitude){
         FMLocateCoordTransformer transformer = new FMLocateCoordTransformer();
         return transformer.wgs2WebMercator(longitude,latitude);
+    }
+
+    public static LatLng WebMercator2wgs(FMMapCoord coord){
+        double var5 = coord.x;
+        double var7 = coord.y;
+        double lon = var5 * 180.0D / 2.003750834E7D;
+//        double var5 = lon * 2.003750834E7D / 180.0D;
+
+        var7 = var7 * 180.0D / 2.003750834E7D;
+        double tmp = Math.exp(var7*(PI / 180.0D));//tmp=Math.tan((90.0D + lat) * PI / 360.0D)
+        tmp = Math.atan(tmp); //tmp = (90.0D + lat) * PI / 360.0D
+        double lat = tmp * 360.0D/PI - 90.0D;
+//        double var7 = Math.log(Math.tan((90.0D + lat) * PI / 360.0D)) / (PI / 180.0D);
+//        var7 = var7 * 2.003750834E7D / 180.0D;
+        return new LatLng(lon,lat);
     }
 
     /**

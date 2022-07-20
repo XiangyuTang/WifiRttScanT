@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements ScanResultClickLi
             Toast toast = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG);
             toast.setText(msg);//解决Toast提示信息携带应用程序名称的现象
             toast.show();
-            logToUi("Copyright © 2021 THU. All rights reserved.️ ");
+            logToUi("Copyright © 2022 THU. All rights reserved.️ ");
         }
 
 
